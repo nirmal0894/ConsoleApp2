@@ -2,8 +2,10 @@ namespace ConsoleApp2
 {
     using Confluent.Kafka;
     using System;
+    using System.Net.Mail;
     using System.Threading;
     using System.Threading.Tasks;
+    using Unity.Events;
 
     public class ProducerWrapper
     {
@@ -22,14 +24,14 @@ namespace ConsoleApp2
             //    Console.WriteLine("Exception:" + e);
             //};
         }
-        public async Task writeMessage(string message){
+        public async Task<DeliveryResult<string,string>> writeMessage(string message){
            var dr = await this._producer.Build().ProduceAsync(this._topicName, new Message<string, string>()
                         {
                             Key = rand.Next(5).ToString(),
                             Value = message
                         });
             Console.WriteLine($"KAFKA => Delivered '{dr.Value}' to '{dr.TopicPartitionOffset}'");
-            return;
+            return dr;
         }
     }
 }

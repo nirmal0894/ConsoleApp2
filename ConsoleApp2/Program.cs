@@ -1,6 +1,7 @@
 ﻿using ConsoleApp2.Service;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Quartz;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -8,27 +9,31 @@ using Topshelf;
 
 namespace ConsoleApp2
 {
-    class Program
+    public class Program
     {
-
+        
         //public static void Main(string[] args)
         //{
-       //     var pathToExe = Process.GetCurrentProcess().MainModule.FileName;
-       //     var pathToContentRoot = Path.GetDirectoryName(pathToExe);
+        //     var pathToExe = Process.GetCurrentProcess().MainModule.FileName;
+        //     var pathToContentRoot = Path.GetDirectoryName(pathToExe);
 
-       //     var host = WebHost.CreateDefaultBuilder(args)
-       //.UseContentRoot(pathToContentRoot)
-       //.UseStartup<Startup>()
-       //.Build();
-            
-           // CreateWebHostBuilder(args).Build().Run();
+        //     var host = WebHost.CreateDefaultBuilder(args)
+        //.UseContentRoot(pathToContentRoot)
+        //.UseStartup<Startup>()
+        //.Build();
+
+        // CreateWebHostBuilder(args).Build().Run();
         //
         //public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
         //    WebHost.CreateDefaultBuilder(args)
         //        .UseStartup<Startup>();
+
+        
         public static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
+           // var scheduler = new SchedulerBuilder();
+            //var p = scheduler.ScheduleJob();
 
             HostFactory.Run(x =>
             {
@@ -47,6 +52,8 @@ namespace ConsoleApp2
                 x.SetDisplayName("FeedFileProcessor");
                 x.SetDescription("Process the files , decryptes and calls the API to push to kafka");
             });
+
+
         }
     }
 }

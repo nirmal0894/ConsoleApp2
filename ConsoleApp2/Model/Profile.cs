@@ -102,4 +102,10 @@ namespace ConsoleApp2.Model
         public string Productname { get; set; }
         public int Quantity { get; set; }
     }
+
+    public enum KafkaProcesStatus
+    {
+        error = 0,
+        completed = 1
+    }
 }

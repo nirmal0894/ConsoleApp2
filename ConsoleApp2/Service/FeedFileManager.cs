@@ -1,6 +1,7 @@
 ﻿using Confluent.Kafka;
 using ConsoleApp2.Model;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace ConsoleApp2.Service
 {
@@ -8,29 +9,35 @@ namespace ConsoleApp2.Service
     {
         //private IProducer<string, string> _producer;
         private readonly IGetFileRecords getFileDetails;
+       
 
         public FeedFileManager(IGetFileRecords getFileDetails)
         {
-            // this.kafkaApiClient = kafkaApiClient;
             //this._producer = producer;
             this.getFileDetails = getFileDetails;
         }
-        public async void ProcessFeedFile()
+        public async Task<KafkaProcesStatus> ProcessFeedFile()
         {
             var config = new ProducerConfig
             {
                 BootstrapServers = "localhost:9092"
             };
-           // var producer = new Producer<string,srin>
-            //var getFileDetails = new GetFileRecords(environmentConfig);
+            var response = new DeliveryResult<string, string>();
             var feedFileRecords = getFileDetails.GetFileDetails();
-            foreach (Profile record in feedFileRecords)
+            if (feedFileRecords != null)
             {
-                var producer = new ProducerWrapper(config, "kafkaservice");
-                string serializedOrder = JsonConvert.SerializeObject(record);
-                await producer.writeMessage(serializedOrder);
-                //kafkaApiClient.CallKafkaProducerAPI(record);
+                foreach (Profile record in feedFileRecords)
+                {
+                    var producer = new ProducerWrapper(config, "kafkaservice");
+                    string serializedOrder = JsonConvert.SerializeObject(record);
+                    response = await producer.writeMessage(serializedOrder);
+                }
             }
+            if(response.Status.ToString().Equals("Persisted"))
+            {
+                return KafkaProcesStatus.completed;
+            }
+            return KafkaProcesStatus.error;
         }
         
     }
